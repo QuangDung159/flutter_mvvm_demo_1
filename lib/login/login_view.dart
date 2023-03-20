@@ -66,7 +66,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                   icon: Icon(Icons.email),
                   hintText: 'Email',
                   labelText: 'Email: *',
-                  errorText: snapshot.data,
+                  errorText: snapshot.data == '' ? null : snapshot.data,
                 ),
               );
             },
@@ -80,7 +80,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                   decoration: InputDecoration(
                     icon: Icon(Icons.lock),
                     labelText: 'Password: *',
-                    errorText: snapshot.data,
+                    errorText: snapshot.data == '' ? null : snapshot.data,
                   ),
                 );
               }),
