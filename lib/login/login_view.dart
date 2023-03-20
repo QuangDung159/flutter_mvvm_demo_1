@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mvvm_demo_1/login/login_view_model.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -24,6 +25,31 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  final loginViewModel = LoginViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+
+    emailController.addListener(() {
+      loginViewModel.emailSink.add(emailController.text);
+    });
+
+    passwordController.addListener(() {
+      loginViewModel.passwordSink.add(passwordController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    loginViewModel.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,32 +57,67 @@ class _BodyWidgetState extends State<BodyWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TextFormField(
-            decoration: InputDecoration(
-                icon: Icon(Icons.email),
-                hintText: 'Email',
-                labelText: 'Email: *'),
+          StreamBuilder<String>(
+            stream: loginViewModel.emailStream,
+            builder: (context, snapshot) {
+              return TextFormField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.email),
+                  hintText: 'Email',
+                  labelText: 'Email: *',
+                  errorText: snapshot.data,
+                ),
+              );
+            },
           ),
-          TextFormField(
-            obscureText: true,
-            decoration: InputDecoration(
-              icon: Icon(Icons.lock),
-              labelText: 'Password: *',
-            ),
-          ),
+          StreamBuilder<String>(
+              stream: loginViewModel.passwordStream,
+              builder: (context, snapshot) {
+                return TextFormField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.lock),
+                    labelText: 'Password: *',
+                    errorText: snapshot.data,
+                  ),
+                );
+              }),
           SizedBox(
             height: 20,
           ),
-          TextButton(
-            onPressed: () => {},
-            child: Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue[100],
-                borderRadius: BorderRadius.circular(6)
-              ),
-              child: Text('Login'),
-            ),
+          StreamBuilder<bool>(
+            stream: loginViewModel.buttonStream,
+            builder: (context, snapshot) {
+              return TextButton(
+                onPressed: () {
+                  if (!snapshot.hasData) {
+                    return;
+                  } else {
+                    if (snapshot.data!) {
+                    } else {
+                      return;
+                    }
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: snapshot.data != null && snapshot.data!
+                        ? Colors.blue[400]
+                        : Colors.grey[400],
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
