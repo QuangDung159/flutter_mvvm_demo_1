@@ -27,11 +27,11 @@ class LoginViewModel {
   );
 
   Stream<String> get emailStream =>
-      _emailSubject.stream.transform(emailValidation);
+      _emailSubject.stream.transform(emailValidation).skip(1);
   Sink<String> get emailSink => _emailSubject.sink;
 
   Stream<String> get passwordStream =>
-      _passwordSubject.stream.transform(passwordValidation);
+      _passwordSubject.stream.transform(passwordValidation).skip(1);
   Sink<String> get passwordSink => _passwordSubject.sink;
 
   Stream<bool> get buttonStream => _buttonSubject.stream;
